@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>꼬마의 프롬프트 제조기 | 블로그 · 텀블벅 · 이미지</title>
+  <style>
+    :root {
+      --bg: #f6f7fb;
+      --card: #ffffff;
+      --text: #181a1f;
+      --muted: #667085;
+      --line: #e4e7ec;
+      --accent: #3b82f6;
+      --accent-soft: #eff6ff;
+      --accent-dark: #1d4ed8;
+      --green: #10b981;
+      --radius: 16px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Pretendard", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+    }
+    header {
+      background: #fff;
+      border-bottom: 1px solid var(--line);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+    .nav {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      font-size: 1.05rem;
+    }
+    .badge {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent-dark);
+    }
+    .tabs {
+      display: flex;
+      gap: 8px;
+    }
+    .tab-btn {
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--muted);
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 0.88rem;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .tab-btn.active {
+      background: var(--text);
+      color: #fff;
+      border-color: var(--text);
+    }
+    main {
+      max-width: 1120px;
+      margin: 24px auto 48px;
+      padding: 0 20px;
+    }
+    .hero {
+      margin-bottom: 20px;
+    }
+    .hero h1 {
+      margin: 0 0 6px;
+      font-size: 1.55rem;
+      letter-spacing: -0.02em;
+    }
+    .hero p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+    .preset-bar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+    .preset-btn {
+      border: 1px solid #bfdbfe;
+      background: var(--accent-soft);
+      color: var(--accent-dark);
+      padding: 7px 13px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.84rem;
+      cursor: pointer;
+    }
+    .preset-btn:hover { background: #dbeafe; }
+    .grid {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 20px;
+      align-items: start;
+    }
+    @media (max-width: 880px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(16, 24, 40, 0.03);
+    }
+    .card h2 {
+      margin: 0 0 14px;
+      font-size: 1.08rem;
+    }
+    .field { margin-bottom: 13px; }
+    label {
+      display: block;
+      font-size: 0.84rem;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+    .req { color: #ef4444; }
+    input[type="text"], input[type="number"], select, textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 0.9rem;
+      font-family: inherit;
+      background: #fff;
+      color: var(--text);
+    }
+    textarea { min-height: 76px; resize: vertical; }
+    input:focus, select:focus, textarea:focus {
+      outline: 2px solid #93c5fd;
+      border-color: var(--accent);
+    }
+    .row2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    @media (max-width: 520px) { .row2 { grid-template-columns: 1fr; } }
+    .actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+    }
+    .btn-primary {
+      flex: 1;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-weight: 800;
+      font-size: 0.95rem;
+      cursor: pointer;
+    }
+    .btn-primary:hover { background: var(--accent-dark); }
+    .btn-ghost {
+      background: #f2f4f7;
+      color: var(--text);
+      border: none;
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+    .output-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .copy-btn {
+      background: var(--text);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 7px 13px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .copy-btn.copied { background: var(--green); }
+    pre.output {
+      margin: 0;
+      background: #f8fafc;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 14px;
+      font-family: inherit;
+      font-size: 0.86rem;
+      white-space: pre-wrap;
+      word-break: break-word;
+      min-height: 360px;
+      max-height: 680px;
+      overflow-y: auto;
+      color: #1f2937;
+    }
+    .hidden { display: none; }
+    .hint {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="nav">
+      <div class="brand">
+        <span>✨ 꼬마의 프롬프트 제조기</span>
+        <span class="badge">화니 × 경환</span>
+      </div>
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('blog', this)">블로그 · 텀블벅</button>
+        <button class="tab-btn" onclick="switchTab('image', this)">이미지 제작</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- BLOG TAB -->
+    <section id="tab-blog">
+      <div class="hero">
+        <h1>네이버 블로그 · 체험단 프롬프트 제조기</h1>
+        <p>꼬마의 반짝 리뷰노트 스타일(체험단 문구 · 텀블벅 프리셋 · 문체 스위치)에 딱 맞게 프롬프트를 뽑아 줍니다.</p>
+        <div class="preset-bar">
+          <button class="preset-btn" onclick="applyTumblbugPreset()">🏺 텀블벅 체험단 프리셋 넣기</button>
+          <button class="preset-btn" onclick="applyFoodPreset()">🍜 맛집·식품 리뷰 프리셋 넣기</button>
+          <button class="preset-btn" onclick="applyCommunityPreset()">💬 텀블벅 커뮤니티(980자) 프리셋</button>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <h2>1. 리뷰 정보 입력</h2>
+          <div class="field">
+            <label>블로그 주제 <span class="req">*</span></label>
+            <input id="b-topic" type="text" placeholder="예: 숨향 유향 몰약 롤온 세트 텀블벅 체험단 후기" />
+          </div>
+          <div class="field">
+            <label>핵심 키워드 <span class="req">*</span></label>
+            <input id="b-keywords" type="text" placeholder="예: 유향 몰약 오일, 숨향 롤온, 텀블벅 향수 체험단" />
+          </div>
+          <div class="field">
+            <label>보조 키워드</label>
+            <input id="b-subkeywords" type="text" placeholder="예: 성경 유향 몰약, 롤온 향수, 연말 선물 추천" />
+          </div>
+          <div class="row2">
+            <div class="field">
+              <label>광고·협찬 여부</label>
+              <select id="b-sponsor">
+                <option value="체험단 · 무상 제공">체험단 · 무상 제공 (공정위 문구 포함)</option>
+                <option value="내돈내산">내돈내산</option>
+                <option value="해당 없음">해당 없음</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>문체 스타일</label>
+              <select id="b-tone">
+                <option value="calm">다정한 남성 화자 (차분한 ~했어요/~더라고요)</option>
+                <option value="friendly">친근한 추임새 버전 (ㅎㅎ · 츄릅 · 이모티콘)</option>
+                <option value="dreamer">꿈꾸는 리뷰어 (900~980자 커뮤니티용)</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label>제품·업체·프로젝트명</label>
+            <input id="b-product" type="text" placeholder="예: 숨향 (SOOMHYANG) - 유향·몰약 롤온 세트" />
+          </div>
+          <div class="field">
+            <label>실제 경험·느낀 점</label>
+            <textarea id="b-exp" placeholder="직접 써 보며 느낀 점, 인상 깊었던 디테일을 적어 주세요."></textarea>
+          </div>
+          <div class="field">
+            <label>보유 사진·GIF 설명</label>
+            <input id="b-images" type="text" placeholder="예: 리본 포장, 언박싱 GIF, 보물상자 정면, 설명서, 제품 클로즈업" />
+          </div>
+          <div class="field">
+            <label>꼭 포함할 정보</label>
+            <input id="b-include" type="text" placeholder="예: 펀딩 기간, 펀딩 달성률 캡처, 하단 OG 링크 카드" />
+          </div>
+          <div class="field">
+            <label>제외하거나 주의할 내용</label>
+            <input id="b-exclude" type="text" value="본문에 텍스트 스펙표 및 해시태그(#) 직접 나열 금지, 과장된 표현 금지" />
+          </div>
+          <div class="row2">
+            <div class="field">
+              <label>희망 분량</label>
+              <input id="b-length" type="text" placeholder="예: 공백 포함 1,500~2,000자 (커뮤니티는 980자)" />
+            </div>
+            <div class="field">
+              <label>발행 태그 개수</label>
+              <input id="b-tags" type="number" value="10" min="0" max="30" />
+            </div>
+          </div>
+          <div class="actions">
+            <button class="btn-primary" onclick="buildBlogPrompt()">프롬프트 만들기</button>
+            <button class="btn-ghost" onclick="resetBlog()">초기화</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="output-head">
+            <h2 style="margin:0;">2. 완성된 프롬프트</h2>
+            <button class="copy-btn" onclick="copyText('b-out', this)">복사하기</button>
+          </div>
+          <pre id="b-out" class="output">왼쪽에 주제와 핵심 키워드를 입력하거나 위 프리셋 버튼을 눌러 '프롬프트 만들기'를 눌러 주세요.</pre>
+          <p class="hint">입력값은 브라우저(localStorage)에만 저장되며 외부 서버로 전송되지 않습니다.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- IMAGE TAB -->
+    <section id="tab-image" class="hidden">
+      <div class="hero">
+        <h1>이미지 제작 프롬프트 제조기</h1>
+        <p>블로그 썸네일, 관찰일기, 제품 연출 컷에 쓸 이미지 생성 프롬프트를 만듭니다.</p>
+      </div>
+      <div class="grid">
+        <div class="card">
+          <h2>1. 이미지 구상 입력</h2>
+          <div class="field">
+            <label>이미지 주제·핵심 장면 <span class="req">*</span></label>
+            <input id="i-topic" type="text" placeholder="예: 따뜻한 우드 테이블 위 보물상자와 두 개의 금빛 오일 병" />
+          </div>
+          <div class="field">
+            <label>사용 목적·매체 <span class="req">*</span></label>
+            <input id="i-purpose" type="text" placeholder="예: 네이버 블로그 후기 대표 이미지" />
+          </div>
+          <div class="field">
+            <label>원하는 스타일</label>
+            <input id="i-style" type="text" placeholder="예: 자연스러운 라이프스타일 사진, 크레용 파스텔 일러스트" />
+          </div>
+          <div class="field">
+            <label>꼭 포함할 요소·세부 묘사</label>
+            <textarea id="i-details" placeholder="예: 부드러운 오후 햇살, 나무 질감, 여백"></textarea>
+          </div>
+          <div class="row2">
+            <div class="field">
+              <label>구도·여백</label>
+              <input id="i-comp" type="text" placeholder="예: 살짝 위에서 본 미디엄 샷" />
+            </div>
+            <div class="field">
+              <label>이미지 비율</label>
+              <select id="i-ratio">
+                <option value="정하지 않음">정하지 않음</option>
+                <option value="정사각형 (1:1)">정사각형 (1:1)</option>
+                <option value="세로형 (4:5)">세로형 (4:5)</option>
+                <option value="가로형 (16:9)">가로형 (16:9)</option>
+                <option value="가로형 (4:3)">가로형 (4:3)</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label>피하고 싶은 요소</label>
+            <input id="i-avoid" type="text" value="과도한 보정, 깨진 글자, 어색한 손, 복잡한 배경" />
+          </div>
+          <div class="actions">
+            <button class="btn-primary" onclick="buildImagePrompt()">이미지 프롬프트 만들기</button>
+            <button class="btn-ghost" onclick="resetImage()">초기화</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="output-head">
+            <h2 style="margin:0;">2. 완성 이미지 프롬프트</h2>
+            <button class="copy-btn" onclick="copyText('i-out', this)">복사하기</button>
+          </div>
+          <pre id="i-out" class="output">왼쪽에 주제와 사용 목적을 입력하고 '이미지 프롬프트 만들기'를 눌러 주세요.</pre>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    function switchTab(name, btn) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('tab-blog').classList.toggle('hidden', name !== 'blog');
+      document.getElementById('tab-image').classList.toggle('hidden', name !== 'image');
+    }
+
+    function applyTumblbugPreset() {
+      document.getElementById('b-sponsor').value = '체험단 · 무상 제공';
+      document.getElementById('b-tone').value = 'calm';
+      document.getElementById('b-include').value = '텀블벅 체험단 무상 제공 안내, 펀딩 기간, 하단 펀딩 달성률 캡처 + OG 링크 미리보기 카드';
+      document.getElementById('b-exclude').value = '본문에 텍스트 스펙표 및 해시태그(#) 직접 나열 금지, 과장된 표현 금지';
+      document.getElementById('b-length').value = '공백 포함 약 1,500~2,000자';
+      document.getElementById('b-tags').value = 10;
+    }
+
+    function applyFoodPreset() {
+      document.getElementById('b-sponsor').value = '체험단 · 무상 제공';
+      document.getElementById('b-tone').value = 'friendly';
+      document.getElementById('b-include').value = '실제 맛/식감 묘사, 먹으면서 떠오른 솔직한 추임새, 구매/펀딩 링크';
+      document.getElementById('b-exclude').value = '본문에 텍스트 스펙표 및 해시태그(#) 직접 나열 금지, 과장된 효능 표현 금지';
+      document.getElementById('b-length').value = '공백 포함 약 1,400~1,800자';
+      document.getElementById('b-tags').value = 10;
+    }
+
+    function applyCommunityPreset() {
+      document.getElementById('b-sponsor').value = '체험단 · 무상 제공';
+      document.getElementById('b-tone').value = 'dreamer';
+      document.getElementById('b-include').value = '말머리 [체험단 리뷰], 첫인상·포장·구체적 사용 경험·창작자 응원';
+      document.getElementById('b-exclude').value = '마크다운 볼드(**)나 소제목 금지, 1,000자 초과 금지';
+      document.getElementById('b-length').value = '공백 포함 900~980자 이내';
+      document.getElementById('b-tags').value = 0;
+    }
+
+    function buildBlogPrompt() {
+      const topic = document.getElementById('b-topic').value.trim();
+      const keywords = document.getElementById('b-keywords').value.trim();
+      if (!topic || !keywords) {
+        alert('블로그 주제와 핵심 키워드는 필수입니다!');
+        return;
+      }
+      const sub = document.getElementById('b-subkeywords').value.trim();
+      const sponsor = document.getElementById('b-sponsor').value;
+      const tone = document.getElementById('b-tone').value;
+      const product = document.getElementById('b-product').value.trim();
+      const exp = document.getElementById('b-exp').value.trim();
+      const images = document.getElementById('b-images').value.trim();
+      const include = document.getElementById('b-include').value.trim();
+      const exclude = document.getElementById('b-exclude').value.trim();
+      const length = document.getElementById('b-length').value.trim() || '주제에 맞게 간결하고 충분한 분량';
+      const tags = document.getElementById('b-tags').value || '10';
+
+      let toneGuide = '';
+      if (tone === 'calm') {
+        toneGuide = `[문체: 다정하고 친근한 남성 화자]
+- 차분하고 편안한 1인칭 남성 화자의 자연스러운 존댓말을 사용하세요.
+- "~했어요", "~더라고요", "~였습니다", "~할 수 있었어요"를 적절히 섞어 단조롭지 않게 작성하세요.
+- 과장된 유행어·과도한 느낌표는 피하고 진정성 있게 풀어내세요.`;
+      } else if (tone === 'friendly') {
+        toneGuide = `[문체: 친근한 츄릅·ㅎㅎ 버전]
+- 부드러운 존댓말을 기본으로 하되, 군데군데 "ㅎㅎ", "츄릅", "용용체" 등 자연스럽고 귀여운 추임새를 가볍게 섞어 진정성과 생동감을 살리세요.
+- 너무 딱딱한 설명문처럼 쓰지 말고, 실제로 쓰면서/먹으면서 느낀 감정을 솔직하게 담아주세요.`;
+      } else {
+        toneGuide = `[문체: 꿈꾸는 리뷰어 (커뮤니티용)]
+- 따뜻하고 진심이 느껴지는 후기로 작성하되, 과장하지 말고 창작자에게 직접 말을 건네듯 써 주세요.
+- 마크다운 볼드(**)나 소제목 없이 자연스러운 문단과 줄바꿈만 사용하고, 적당한 이모지(☺️, ✨, 🥹, 😊 등)를 소량 활용하세요.
+- 반드시 공백 포함 900~980자 이내로 맞추세요.`;
+      }
+
+      const sponsorRule = sponsor === '체험단 · 무상 제공'
+        ? '- 도입부에 체험단으로 제품을 무상 제공받아 직접 사용해 보고 작성한 솔직 후기임을 자연스럽게 명시하세요.'
+        : `- 광고·협찬 여부: ${sponsor}`;
+
+      const out = `[역할과 목표]
+당신은 '꼬마의 반짝 리뷰노트' 블로그와 텀블벅 커뮤니티 후기를 작성하는 한국어 에디터입니다. 아래 입력값을 바탕으로 읽기 쉽고 진정성 있는 후기 초안을 작성하세요.
+
+[사용자 입력값]
+- 주제: ${topic}
+- 핵심 키워드: ${keywords}
+${sub ? `- 보조 키워드: ${sub}\n` : ''}${product ? `- 제품·업체명: ${product}\n` : ''}- 광고·협찬 여부: ${sponsor}
+${exp ? `- 실제 경험·느낀 점: ${exp}\n` : ''}${images ? `- 보유 사진·GIF: ${images}\n` : ''}${include ? `- 꼭 포함할 정보: ${include}\n` : ''}${exclude ? `- 제외·주의 내용: ${exclude}\n` : ''}- 희망 분량: ${length}
+- 발행 태그 목표 개수: ${tags}
+
+[정확성과 신뢰 원칙]
+1. 입력된 실제 경험과 확인된 사실만 사용하세요. 제공되지 않은 효능·가격·감정을 지어내지 마세요.
+${sponsorRule}
+2. 본문 하단에 텍스트 스펙표나 해시태그(#)를 직접 나열하지 말고, 태그는 발행 시 태그 입력란용으로만 따로 제안하세요.
+
+${toneGuide}
+
+[이미지 배치 및 출력 형식]
+1. 추천 제목 3개 + 최종 추천 제목 1개
+2. 완성된 본문 (사진·GIF 삽입 위치를 [사진: ...] 형태로 표시, 하단에는 펀딩 달성률 캡처 + OG 링크 카드 자리 표시)
+3. 발행용 태그 ${tags}개 (본문 제외)
+4. 공백 포함 글자 수 안내`;
+
+      document.getElementById('b-out').textContent = out;
+    }
+
+    function buildImagePrompt() {
+      const topic = document.getElementById('i-topic').value.trim();
+      const purpose = document.getElementById('i-purpose').value.trim();
+      if (!topic || !purpose) {
+        alert('이미지 주제와 사용 목적은 필수입니다!');
+        return;
+      }
+      const style = document.getElementById('i-style').value.trim() || '자연스러운 라이프스타일 사진';
+      const details = document.getElementById('i-details').value.trim();
+      const comp = document.getElementById('i-comp').value.trim();
+      const ratio = document.getElementById('i-ratio').value;
+      const avoid = document.getElementById('i-avoid').value.trim();
+
+      const out = `[이미지 생성 프롬프트]
+- 핵심 장면: ${topic}
+- 사용 목적: ${purpose}
+- 스타일: ${style}
+${details ? `- 포함 요소: ${details}\n` : ''}${comp ? `- 구도·여백: ${comp}\n` : ''}- 비율: ${ratio}
+${avoid ? `- 제외 요소: ${avoid}\n` : ''}
+[영문 프롬프트 초안]
+${topic}, ${style}${details ? ', ' + details : ''}${comp ? ', ' + comp : ''}, soft natural lighting, clean composition, high quality${avoid ? ' --no ' + avoid : ''}`;
+
+      document.getElementById('i-out').textContent = out;
+    }
+
+    function resetBlog() {
+      ['b-topic','b-keywords','b-subkeywords','b-product','b-exp','b-images','b-include','b-length'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('b-out').textContent = "왼쪽에 주제와 핵심 키워드를 입력하거나 위 프리셋 버튼을 눌러 '프롬프트 만들기'를 눌러 주세요.";
+    }
+    function resetImage() {
+      ['i-topic','i-purpose','i-style','i-details','i-comp'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('i-out').textContent = "왼쪽에 주제와 사용 목적을 입력하고 '이미지 프롬프트 만들기'를 눌러 주세요.";
+    }
+    function copyText(id, btn) {
+      const txt = document.getElementById(id).textContent;
+      navigator.clipboard.writeText(txt).then(() => {
+        btn.textContent = '복사 완료!';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = '복사하기'; btn.classList.remove('copied'); }, 1600);
+      });
+    }
+  </script>
+</body>
+</html>
