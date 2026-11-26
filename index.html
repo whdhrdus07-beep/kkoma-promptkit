@@ -226,6 +226,137 @@
       color: var(--muted);
       margin-top: 4px;
     }
+    .sub {
+      font-size: 0.83rem;
+      color: var(--muted);
+      margin: -6px 0 14px;
+    }
+    .badge-soft {
+      display: inline-block;
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--accent-dark);
+      background: var(--accent-soft);
+      border-radius: 999px;
+      padding: 2px 8px;
+      margin-left: 6px;
+      vertical-align: 1px;
+    }
+    .preset-btn.active {
+      background: var(--text);
+      border-color: var(--text);
+      color: #fff;
+    }
+    .custom-input { margin-top: 8px; }
+    .chip-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 999px;
+      padding: 6px 11px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--muted);
+      cursor: pointer;
+      user-select: none;
+      margin: 0;
+    }
+    .chip input {
+      width: auto;
+      margin: 0;
+      accent-color: var(--accent);
+    }
+    .chip.on {
+      border-color: #bfdbfe;
+      background: var(--accent-soft);
+      color: var(--accent-dark);
+    }
+    .seg {
+      display: flex;
+      gap: 4px;
+      background: #f2f4f7;
+      border-radius: 999px;
+      padding: 3px;
+    }
+    .seg-btn {
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      font-weight: 700;
+      font-size: 0.8rem;
+      padding: 6px 12px;
+      border-radius: 999px;
+      cursor: pointer;
+    }
+    .seg-btn.active {
+      background: #fff;
+      color: var(--text);
+      box-shadow: 0 1px 3px rgba(16, 24, 40, 0.12);
+    }
+    .out-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: 2px 0 10px;
+    }
+    .out-tag {
+      font-size: 0.76rem;
+      color: var(--muted);
+    }
+    .notice {
+      font-size: 0.78rem;
+      line-height: 1.5;
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      color: #92400e;
+      border-radius: 10px;
+      padding: 8px 11px;
+      margin: 0 0 10px;
+    }
+    .notice.ok {
+      background: #ecfdf5;
+      border-color: #a7f3d0;
+      color: #065f46;
+    }
+    details.tips {
+      margin-top: 14px;
+      border-top: 1px dashed var(--line);
+      padding-top: 10px;
+    }
+    details.tips summary {
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+    details.tips p {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin: 6px 0 0;
+    }
+    details.tips p b { color: var(--text); }
+    .neg-wrap { margin-top: 12px; }
+    pre.neg {
+      margin: 0;
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      border-radius: 12px;
+      padding: 12px;
+      font-family: inherit;
+      font-size: 0.82rem;
+      white-space: pre-wrap;
+      word-break: break-word;
+      color: #7f1d1d;
+      min-height: 0;
+    }
   </style>
 </head>
 <body>
@@ -339,58 +470,196 @@
     <section id="tab-image" class="hidden">
       <div class="hero">
         <h1>이미지 제작 프롬프트 제조기</h1>
-        <p>블로그 썸네일, 관찰일기, 제품 연출 컷에 쓸 이미지 생성 프롬프트를 만듭니다.</p>
+        <p>주제 · 사용 목적 · 스타일 · 구도 · 조명 · 비율 · 제외 요소를 정리해 <b>한국어 프롬프트</b>(ChatGPT·Gemini)와 <b>영문 프롬프트</b>(Midjourney·SD)를 따로 뽑아 줍니다.</p>
+        <div class="preset-bar">
+          <button class="preset-btn" onclick="applyImagePreset('thumb', this)">🖼️ 블로그 썸네일</button>
+          <button class="preset-btn" onclick="applyImagePreset('mood', this)">🌿 감성 연출 컷</button>
+          <button class="preset-btn" onclick="applyImagePreset('banner', this)">💬 인용·피드백 배너</button>
+        </div>
+        <p class="hint" id="i-preset-hint">프리셋을 누르면 스타일·구도·조명·비율·제외 요소가 한 번에 채워져요. 주제만 직접 적으면 바로 완성!</p>
       </div>
+
       <div class="grid">
         <div class="card">
           <h2>1. 이미지 구상 입력</h2>
+          <p class="sub">주제와 사용 목적은 필수, 나머지는 비워도 괜찮아요.</p>
+
           <div class="field">
             <label>이미지 주제·핵심 장면 <span class="req">*</span></label>
-            <input id="i-topic" type="text" placeholder="예: 따뜻한 우드 테이블 위 보물상자와 두 개의 금빛 오일 병" />
+            <textarea id="i-topic" placeholder="예: 따뜻한 우드 테이블 위 보물상자와 두 개의 금빛 오일 병 (한국어로 편하게 적어 주세요)"></textarea>
           </div>
+
           <div class="field">
             <label>사용 목적·매체 <span class="req">*</span></label>
-            <input id="i-purpose" type="text" placeholder="예: 네이버 블로그 후기 대표 이미지" />
+            <select id="i-purpose" onchange="document.getElementById('i-purpose-custom').classList.toggle('hidden', this.value !== 'custom')">
+              <option value="blog-cover">네이버 블로그 대표 이미지(썸네일)</option>
+              <option value="blog-body">블로그 본문 보조 이미지</option>
+              <option value="product-mood">제품·소품 연출 컷</option>
+              <option value="quote-card">인용·피드백 카드</option>
+              <option value="community">텀블벅·커뮤니티 후기 이미지</option>
+              <option value="sns">인스타·SNS 피드 이미지</option>
+              <option value="custom">직접 입력</option>
+            </select>
+            <input id="i-purpose-custom" class="custom-input hidden" type="text" placeholder="영문 권장 · 예: cover image for a perfume review post" />
           </div>
+
+          <div class="field">
+            <label>English scene &amp; details<span class="badge-soft">Midjourney용 · 선택</span></label>
+            <textarea id="i-en" placeholder="예: a wooden treasure box and two golden oil bottles on a warm oak table, dried flowers in the background"></textarea>
+            <p class="hint">여기 적은 영어 문장이 영문 프롬프트의 주제 줄로 들어갑니다. 비워 두면 영문 쪽에 [your subject in English] 자리표시가 생겨요.</p>
+          </div>
+
           <div class="field">
             <label>원하는 스타일</label>
-            <input id="i-style" type="text" placeholder="예: 자연스러운 라이프스타일 사진, 크레용 파스텔 일러스트" />
+            <select id="i-style" onchange="toggleCustomInput('i-style', 'i-style-custom')">
+              <option value="photo-lifestyle">자연스러운 라이프스타일 사진</option>
+              <option value="photo-film">필름 감성 사진</option>
+              <option value="photo-studio">스튜디오 제품 사진</option>
+              <option value="photo-food">음식 클로즈업 사진</option>
+              <option value="illust-crayon">크레용·파스텔 일러스트</option>
+              <option value="illust-watercolor">수채화 일러스트</option>
+              <option value="illust-flat">플랫 벡터 일러스트</option>
+              <option value="graphic-card">미니멀 카드·배너 그래픽</option>
+              <option value="render-3d">3D 클레이 렌더</option>
+              <option value="custom">직접 입력</option>
+            </select>
+            <input id="i-style-custom" class="custom-input hidden" type="text" placeholder="영문 권장 · 예: warm watercolor storybook illustration" />
           </div>
+
           <div class="field">
             <label>꼭 포함할 요소·세부 묘사</label>
-            <textarea id="i-details" placeholder="예: 부드러운 오후 햇살, 나무 질감, 여백"></textarea>
+            <textarea id="i-details" placeholder="예: 나무 질감, 김이 나는 커피, 창밖의 초록 풍경, 오른쪽에 제목용 여백"></textarea>
           </div>
+
           <div class="row2">
             <div class="field">
-              <label>구도·여백</label>
-              <input id="i-comp" type="text" placeholder="예: 살짝 위에서 본 미디엄 샷" />
+              <label>구도·카메라 시점</label>
+              <select id="i-comp" onchange="toggleCustomInput('i-comp', 'i-comp-custom')">
+                <option value="hero-wide">와이드 히어로 컷 (시선 집중)</option>
+                <option value="medium-high">살짝 위에서 본 미디엄 샷</option>
+                <option value="closeup">클로즈업 디테일</option>
+                <option value="eye-level">눈높이 정면</option>
+                <option value="low-angle">로우 앵글</option>
+                <option value="flatlay">플랫레이 (위에서 수직으로)</option>
+                <option value="centered-card">중앙 정렬 카드 (좌우 여백)</option>
+                <option value="right-negative">오른쪽 피사체·왼쪽 여백</option>
+                <option value="custom">직접 입력</option>
+              </select>
+              <input id="i-comp-custom" class="custom-input hidden" type="text" placeholder="영문 권장 · 예: two-thirds view with the product on the left" />
             </div>
             <div class="field">
               <label>이미지 비율</label>
               <select id="i-ratio">
-                <option value="정하지 않음">정하지 않음</option>
-                <option value="정사각형 (1:1)">정사각형 (1:1)</option>
-                <option value="세로형 (4:5)">세로형 (4:5)</option>
-                <option value="가로형 (16:9)">가로형 (16:9)</option>
-                <option value="가로형 (4:3)">가로형 (4:3)</option>
+                <option value="none">정하지 않음</option>
+                <option value="1:1">정사각형 (1:1)</option>
+                <option value="4:5">세로형 (4:5)</option>
+                <option value="3:4">세로형 (3:4)</option>
+                <option value="9:16">세로형 (9:16)</option>
+                <option value="3:2">가로형 (3:2)</option>
+                <option value="16:9">가로형 (16:9)</option>
+                <option value="4:3">가로형 (4:3)</option>
               </select>
             </div>
           </div>
+
+          <div class="row2">
+            <div class="field">
+              <label>조명·시간대</label>
+              <select id="i-light" onchange="toggleCustomInput('i-light', 'i-light-custom')">
+                <option value="natural-soft">부드러운 자연광</option>
+                <option value="morning-window">아침 창가 빛</option>
+                <option value="golden-hour">오후 골든아워 역광</option>
+                <option value="studio-soft">스튜디오 소프트박스</option>
+                <option value="warm-indoor">실내 따뜻한 조명</option>
+                <option value="moody-low">어두운 무드 조명</option>
+                <option value="night-neon">밤·네온 조명</option>
+                <option value="custom">직접 입력</option>
+              </select>
+              <input id="i-light-custom" class="custom-input hidden" type="text" placeholder="영문 권장 · 예: soft window light from the left" />
+            </div>
+            <div class="field">
+              <label>색감·분위기</label>
+              <select id="i-palette" onchange="toggleCustomInput('i-palette', 'i-palette-custom')">
+                <option value="warm-beige">따뜻한 베이지·브라운</option>
+                <option value="clean-neutral">화이트·뉴트럴 미니멀</option>
+                <option value="natural-green">차분한 그린·내추럴</option>
+                <option value="pastel">파스텔·소프트</option>
+                <option value="vivid">선명한 원색 포인트</option>
+                <option value="mono">흑백·모노톤</option>
+                <option value="custom">직접 입력</option>
+              </select>
+              <input id="i-palette-custom" class="custom-input hidden" type="text" placeholder="영문 권장 · 예: muted sage green and cream" />
+            </div>
+          </div>
+
+          <div class="field">
+            <label>이미지에 넣을 문구<span class="badge-soft">배너용 · 선택</span></label>
+            <input id="i-overlay" type="text" placeholder="예: 오늘도 수고했어요 / 구매자 피드백: 포장이 너무 예뻐요!" />
+            <p class="hint">비워 두면 글자 없는 이미지로 지시해요. 한글 문구는 ChatGPT(GPT 이미지)가 가장 잘 그립니다.</p>
+          </div>
+
           <div class="field">
             <label>피하고 싶은 요소</label>
-            <input id="i-avoid" type="text" value="과도한 보정, 깨진 글자, 어색한 손, 복잡한 배경" />
+            <div class="chip-group" id="i-avoid-chips">
+              <label class="chip on"><input type="checkbox" value="overretouch" checked onchange="this.closest('label').classList.toggle('on', this.checked)" />과도한 보정</label>
+              <label class="chip on"><input type="checkbox" value="garbled" checked onchange="this.closest('label').classList.toggle('on', this.checked)" />깨진 글자·오타</label>
+              <label class="chip on"><input type="checkbox" value="hands" checked onchange="this.closest('label').classList.toggle('on', this.checked)" />어색한 손·손가락</label>
+              <label class="chip"><input type="checkbox" value="clutter" onchange="this.closest('label').classList.toggle('on', this.checked)" />복잡한 배경</label>
+              <label class="chip"><input type="checkbox" value="watermark" onchange="this.closest('label').classList.toggle('on', this.checked)" />워터마크·로고</label>
+              <label class="chip"><input type="checkbox" value="copyright" onchange="this.closest('label').classList.toggle('on', this.checked)" />저작권 캐릭터·상표</label>
+              <label class="chip"><input type="checkbox" value="aiface" onchange="this.closest('label').classList.toggle('on', this.checked)" />AI 티 나는 얼굴</label>
+              <label class="chip"><input type="checkbox" value="blur" onchange="this.closest('label').classList.toggle('on', this.checked)" />흐림·노이즈</label>
+              <label class="chip"><input type="checkbox" value="color" onchange="this.closest('label').classList.toggle('on', this.checked)" />어수선한 색</label>
+              <label class="chip"><input type="checkbox" value="anytext" onchange="this.closest('label').classList.toggle('on', this.checked)" />글자 자체</label>
+            </div>
+            <input id="i-avoid-custom" class="custom-input" type="text" placeholder="추가로 피할 요소 (선택) · 영문 권장" />
           </div>
+
+          <div class="row2">
+            <div class="field">
+              <label>필요한 이미지 수</label>
+              <input id="i-count" type="number" min="1" max="20" value="1" />
+            </div>
+            <div class="field">
+              <label>참고·제약 (선택)</label>
+              <input id="i-ref" type="text" placeholder="예: 첨부 사진의 색감만 참고" />
+            </div>
+          </div>
+
           <div class="actions">
             <button class="btn-primary" onclick="buildImagePrompt()">이미지 프롬프트 만들기</button>
             <button class="btn-ghost" onclick="resetImage()">초기화</button>
           </div>
         </div>
+
         <div class="card">
           <div class="output-head">
-            <h2 style="margin:0;">2. 완성 이미지 프롬프트</h2>
-            <button class="copy-btn" onclick="copyText('i-out', this)">복사하기</button>
+            <h2 style="margin:0;">2. 완성 프롬프트</h2>
+            <div class="seg">
+              <button class="seg-btn active" onclick="switchImageOut('ko', this)">🇰🇷 한국어</button>
+              <button class="seg-btn" onclick="switchImageOut('en', this)">🇬🇧 English</button>
+            </div>
           </div>
+          <div class="out-actions">
+            <span class="out-tag" id="i-out-tag">ChatGPT · Gemini 등 한국어 지원 이미지 AI용</span>
+            <button class="copy-btn" id="i-copy-btn" onclick="copyText('i-out', this)">복사하기</button>
+          </div>
+          <p class="notice hidden" id="i-en-notice"></p>
           <pre id="i-out" class="output">왼쪽에 주제와 사용 목적을 입력하고 '이미지 프롬프트 만들기'를 눌러 주세요.</pre>
+          <div class="neg-wrap hidden" id="i-neg-wrap">
+            <div class="out-actions" style="margin: 10px 0 6px;">
+              <span class="out-tag">Negative prompt · Stable Diffusion / ComfyUI</span>
+              <button class="copy-btn" onclick="copyText('i-neg', this)">복사하기</button>
+            </div>
+            <pre id="i-neg" class="neg"></pre>
+          </div>
+          <details class="tips">
+            <summary>도구별 활용 팁</summary>
+            <p><b>ChatGPT 이미지</b> — 한국어 프롬프트를 그대로 붙여 넣고 생성하세요. 수정은 “주제는 유지하고 구도만 더 넓게”, “색감만 덜 노랗게”처럼 한 번에 한두 가지만 요청하면 잘 따라와요. 한글 문구를 넣을 때도 가장 정확합니다.</p>
+            <p><b>Gemini 이미지</b> — 텍스트와 참고 이미지를 함께 줄 수 있어요. 유지할 요소와 바꿀 요소를 구분해서 말하고, 수정할 영역을 구체적으로 지정하세요.</p>
+            <p><b>Midjourney</b> — English 탭의 프롬프트를 그대로 붙여 넣으면 --ar·--no까지 함께 적용돼요. <b>Stable Diffusion · ComfyUI</b>는 맨 끝의 --ar·--no 부분만 지우고 Positive 칸에, 아래 빨간 Negative 상자는 Negative 칸에 넣으세요.</p>
+            <p><b>Claude</b> — 환경에 따라 이미지 생성이 없을 수 있어요. 그럴 때는 Claude로 프롬프트를 다듬고 이미지 생성 도구로 옮겨 쓰세요.</p>
+          </details>
         </div>
       </div>
     </section>
@@ -496,29 +765,301 @@ ${toneGuide}
       document.getElementById('b-out').textContent = out;
     }
 
+    /* ---------- 이미지 탭 ---------- */
+    const IMG_DATA = {
+      purpose: {
+        'blog-cover':   { ko: '네이버 블로그 대표 이미지(썸네일)', en: 'Korean blog cover image' },
+        'blog-body':    { ko: '블로그 본문 보조 이미지', en: 'blog article supporting image' },
+        'product-mood': { ko: '제품·소품 연출 컷', en: 'product review mood shot' },
+        'quote-card':   { ko: '인용·피드백 카드', en: 'quote card image' },
+        'community':    { ko: '텀블벅·커뮤니티 후기 이미지', en: 'community review post image' },
+        'sns':          { ko: '인스타·SNS 피드 이미지', en: 'Instagram feed image' }
+      },
+      style: {
+        'photo-lifestyle':   { ko: '자연스러운 라이프스타일 사진', en: 'natural lifestyle photography, 35mm lens, shallow depth of field' },
+        'photo-film':        { ko: '필름 감성 사진', en: 'analog film photography, Kodak Portra 400 tones, soft grain' },
+        'photo-studio':      { ko: '스튜디오 제품 사진', en: 'clean studio product photography, seamless backdrop, soft diffused light' },
+        'photo-food':        { ko: '음식 클로즈업 사진', en: 'appetizing food photography, close-up, shallow depth of field' },
+        'illust-crayon':     { ko: '크레용·파스텔 일러스트', en: 'crayon and pastel illustration, hand-drawn paper texture, warm storybook style' },
+        'illust-watercolor': { ko: '수채화 일러스트', en: 'soft watercolor illustration, paper texture, gentle color washes' },
+        'illust-flat':       { ko: '플랫 벡터 일러스트', en: 'flat vector illustration, minimal geometric shapes, clean lines' },
+        'graphic-card':      { ko: '미니멀 카드·배너 그래픽', en: 'minimal editorial card design, flat graphic shapes, generous negative space' },
+        'render-3d':         { ko: '3D 클레이 렌더', en: 'soft 3D clay render, isometric styling, matte pastel materials' }
+      },
+      comp: {
+        'hero-wide':      { ko: '와이드 히어로 컷 (시선 집중, 제목용 여백)', en: 'wide hero shot with a single clear focal point and generous negative space for a title' },
+        'medium-high':    { ko: '살짝 위에서 본 미디엄 샷', en: 'medium shot from a slightly elevated angle' },
+        'closeup':        { ko: '클로즈업 디테일', en: 'tight close-up on textures and details, shallow depth of field' },
+        'eye-level':      { ko: '눈높이 정면', en: 'eye-level straight-on view' },
+        'low-angle':      { ko: '로우 앵글', en: 'low angle shot looking slightly up' },
+        'flatlay':        { ko: '플랫레이 (위에서 수직으로)', en: 'top-down flat lay composition at a perfectly perpendicular angle' },
+        'centered-card':  { ko: '중앙 정렬 카드 (좌우 여백)', en: 'centered card layout with balanced margins and room above and below the subject' },
+        'right-negative': { ko: '오른쪽 피사체·왼쪽 여백', en: 'subject on the right side, clean empty space on the left' }
+      },
+      light: {
+        'natural-soft':   { ko: '부드러운 자연광', en: 'soft diffused natural daylight' },
+        'morning-window': { ko: '아침 창가 빛', en: 'bright morning window light with gentle shadows' },
+        'golden-hour':    { ko: '오후 골든아워 역광', en: 'warm golden hour backlight with a soft lens flare' },
+        'studio-soft':    { ko: '스튜디오 소프트박스', en: 'even studio softbox lighting, minimal shadows' },
+        'warm-indoor':    { ko: '실내 따뜻한 조명', en: 'warm indoor lamp light, cozy ambient glow' },
+        'moody-low':      { ko: '어두운 무드 조명', en: 'moody low-key lighting from a single direction' },
+        'night-neon':     { ko: '밤·네온 조명', en: 'night scene with neon accent lighting, cinematic contrast' }
+      },
+      palette: {
+        'warm-beige':    { ko: '따뜻한 베이지·브라운', en: 'warm beige and brown palette' },
+        'clean-neutral': { ko: '화이트·뉴트럴 미니멀', en: 'clean white and neutral palette, low contrast' },
+        'natural-green': { ko: '차분한 그린·내추럴', en: 'calm natural green and earthy tones' },
+        'pastel':        { ko: '파스텔·소프트', en: 'soft pastel palette, low contrast' },
+        'vivid':         { ko: '선명한 원색 포인트', en: 'vivid saturated accent colors on a clean base' },
+        'mono':          { ko: '흑백·모노톤', en: 'black and white monochrome palette' }
+      }
+    };
+
+    const IMG_AVOID = {
+      overretouch: { ko: '과도한 보정', en: 'over-retouched plastic skin' },
+      garbled:     { ko: '깨진 글자·오타', en: 'garbled text, misspelled letters' },
+      hands:       { ko: '어색한 손·손가락', en: 'deformed hands, extra fingers' },
+      clutter:     { ko: '복잡한 배경', en: 'cluttered background' },
+      watermark:   { ko: '워터마크·로고', en: 'watermarks, logos' },
+      copyright:   { ko: '저작권 캐릭터·상표', en: 'copyrighted characters, brand logos' },
+      aiface:      { ko: 'AI 티 나는 얼굴', en: 'overly smooth AI-looking faces' },
+      blur:        { ko: '흐림·노이즈', en: 'blur, noise, low resolution' },
+      color:       { ko: '어수선한 색', en: 'clashing colors' },
+      anytext:     { ko: '글자 자체', en: 'any text or lettering in the image' }
+    };
+
+    const IMG_PRESETS = {
+      thumb: {
+        hint: '🖼️ 블로그 썸네일: 16:9 기본이에요. 피드용으로 4:3을 쓰려면 비율만 4:3으로 바꾸면 돼요.',
+        purpose: 'blog-cover', style: 'photo-lifestyle', comp: 'hero-wide',
+        light: 'natural-soft', palette: 'warm-beige', ratio: '16:9',
+        avoid: ['overretouch', 'garbled', 'hands', 'clutter', 'watermark']
+      },
+      mood: {
+        hint: '🌿 감성 연출 컷: 제품·소품의 분위기를 바꿀 때 좋아요. 주제에 소품과 배경을 함께 적어 주세요.',
+        purpose: 'product-mood', style: 'photo-film', comp: 'closeup',
+        light: 'golden-hour', palette: 'natural-green', ratio: '4:5',
+        avoid: ['overretouch', 'clutter', 'garbled', 'blur']
+      },
+      banner: {
+        hint: '💬 인용·피드백 배너: 아래 “이미지에 넣을 문구” 칸에 문장을 적으면 그 문구 그대로 넣도록 지시해요.',
+        purpose: 'quote-card', style: 'graphic-card', comp: 'centered-card',
+        light: 'studio-soft', palette: 'pastel', ratio: '1:1',
+        avoid: ['clutter', 'garbled', 'blur', 'color']
+      }
+    };
+
+    let iOut = { ko: '', en: '' };
+    let iOutMode = 'ko';
+    let iNotes = [];
+    let iNeg = '';
+
+    function hasHangul(text) { return /[가-힣]/.test(text); }
+    function iVal(id) {
+      const el = document.getElementById(id);
+      return el ? el.value.trim() : '';
+    }
+    function toggleCustomInput(selectId, customId) {
+      document.getElementById(customId).classList.toggle('hidden', document.getElementById(selectId).value !== 'custom');
+    }
+    function setSelect(id, value, customId) {
+      const sel = document.getElementById(id);
+      if (!Array.from(sel.options).some(o => o.value === value)) return;
+      sel.value = value;
+      if (customId) document.getElementById(customId).classList.toggle('hidden', value !== 'custom');
+    }
+    function optionOf(map, key, customId, blankKo, blankEn) {
+      if (key === 'custom') {
+        const custom = customId ? iVal(customId) : '';
+        return {
+          ko: custom || blankKo,
+          en: custom && !hasHangul(custom) ? custom : blankEn,
+          koreanCustom: !!custom && hasHangul(custom)
+        };
+      }
+      const item = map[key];
+      return item
+        ? { ko: item.ko, en: item.en, koreanCustom: false }
+        : { ko: blankKo, en: blankEn, koreanCustom: false };
+    }
+    function avoidItems() {
+      const list = [];
+      document.querySelectorAll('#i-avoid-chips input:checked').forEach(cb => {
+        const item = IMG_AVOID[cb.value];
+        if (item) list.push(item);
+      });
+      const custom = iVal('i-avoid-custom');
+      if (custom) list.push({ ko: custom, en: hasHangul(custom) ? '' : custom });
+      return list;
+    }
+
+    function applyImagePreset(name, btn) {
+      const preset = IMG_PRESETS[name];
+      if (!preset) return;
+      setSelect('i-purpose', preset.purpose, 'i-purpose-custom');
+      setSelect('i-style', preset.style, 'i-style-custom');
+      setSelect('i-comp', preset.comp, 'i-comp-custom');
+      setSelect('i-light', preset.light, 'i-light-custom');
+      setSelect('i-palette', preset.palette, 'i-palette-custom');
+      setSelect('i-ratio', preset.ratio);
+      document.querySelectorAll('#i-avoid-chips input').forEach(cb => {
+        cb.checked = preset.avoid.includes(cb.value);
+        cb.closest('label').classList.toggle('on', cb.checked);
+      });
+      document.querySelectorAll('#tab-image .preset-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      document.getElementById('i-preset-hint').textContent = preset.hint;
+      if (name === 'banner') document.getElementById('i-overlay').focus();
+      else document.getElementById('i-topic').focus();
+    }
+
     function buildImagePrompt() {
-      const topic = document.getElementById('i-topic').value.trim();
-      const purpose = document.getElementById('i-purpose').value.trim();
-      if (!topic || !purpose) {
-        alert('이미지 주제와 사용 목적은 필수입니다!');
+      const topic = iVal('i-topic');
+      if (!topic) {
+        alert('이미지 주제·핵심 장면은 필수예요!');
+        document.getElementById('i-topic').focus();
         return;
       }
-      const style = document.getElementById('i-style').value.trim() || '자연스러운 라이프스타일 사진';
-      const details = document.getElementById('i-details').value.trim();
-      const comp = document.getElementById('i-comp').value.trim();
-      const ratio = document.getElementById('i-ratio').value;
-      const avoid = document.getElementById('i-avoid').value.trim();
 
-      const out = `[이미지 생성 프롬프트]
-- 핵심 장면: ${topic}
-- 사용 목적: ${purpose}
-- 스타일: ${style}
-${details ? `- 포함 요소: ${details}\n` : ''}${comp ? `- 구도·여백: ${comp}\n` : ''}- 비율: ${ratio}
-${avoid ? `- 제외 요소: ${avoid}\n` : ''}
-[영문 프롬프트 초안]
-${topic}, ${style}${details ? ', ' + details : ''}${comp ? ', ' + comp : ''}, soft natural lighting, clean composition, high quality${avoid ? ' --no ' + avoid : ''}`;
+      const purpose = optionOf(IMG_DATA.purpose, iVal('i-purpose'), 'i-purpose-custom', '이미지 제작', 'image for the stated purpose');
+      const style = optionOf(IMG_DATA.style, iVal('i-style'), 'i-style-custom', '자연스러운 라이프스타일 사진', 'custom visual style');
+      const comp = optionOf(IMG_DATA.comp, iVal('i-comp'), 'i-comp-custom', '주제에 맞는 안정적인 구도', 'balanced custom composition');
+      const light = optionOf(IMG_DATA.light, iVal('i-light'), 'i-light-custom', '부드러운 자연광', 'soft natural lighting');
+      const palette = optionOf(IMG_DATA.palette, iVal('i-palette'), 'i-palette-custom', '차분한 뉴트럴 톤', 'calm neutral palette');
+      const details = iVal('i-details');
+      const ref = iVal('i-ref');
+      const overlay = iVal('i-overlay');
+      const count = iVal('i-count') || '1';
+      const ratioKey = iVal('i-ratio');
+      const ratioKo = ratioKey === 'none' ? '도구에 맞는 비율로 자동 선택' : ratioKey;
+      const avoid = avoidItems();
+      const avoidKo = avoid.length ? avoid.map(a => a.ko).join(', ') : '없음';
+      const avoidEn = avoid.filter(a => a.en).map(a => a.en).join(', ');
 
-      document.getElementById('i-out').textContent = out;
+      iNotes = [];
+      const scene = iVal('i-en');
+      let sceneEn = '';
+      if (scene && !hasHangul(scene)) {
+        sceneEn = scene;
+      } else {
+        sceneEn = '[your subject in English]';
+        if (scene) iNotes.push('English scene 칸에 한국어가 섞여 있어 자리표시로 바꿨어요.');
+        else iNotes.push('English scene 칸에 장면을 영어로 적으면 영문 프롬프트가 바로 완성돼요.');
+      }
+      if ([style, comp, light, palette, purpose].some(o => o.koreanCustom)) {
+        iNotes.push('직접 입력한 항목 중 한국어가 있어 영문에는 기본 영어 표현을 넣었어요.');
+      }
+      if (overlay && hasHangul(overlay)) {
+        iNotes.push('한글 문구는 요청한 그대로 넣었어요. 대부분의 영문 도구는 한글을 정확히 그리지 못하니 ChatGPT 이미지를 권해요.');
+      }
+      iNotes = Array.from(new Set(iNotes));
+
+      const koLines = [
+        '이미지 제작 프롬프트',
+        '',
+        '목표: ' + purpose.ko,
+        '핵심 주제와 장면: ' + topic,
+        '필요한 이미지 수: ' + count + '장',
+        '원하는 스타일: ' + style.ko,
+        '구도·시점·여백: ' + comp.ko,
+        '조명·시간대: ' + light.ko,
+        '색감·분위기: ' + palette.ko,
+        '비율: ' + ratioKo
+      ];
+      if (details) koLines.push('꼭 포함할 요소·세부 묘사: ' + details);
+      koLines.push('피하고 싶은 요소: ' + avoidKo);
+      if (ref) koLines.push('참고 이미지·브랜드·인물 제약: ' + ref);
+      if (overlay) koLines.push('이미지 안에 넣을 문구: "' + overlay + '"');
+
+      koLines.push(
+        '',
+        '[생성 지침]',
+        '- 위 핵심 주제와 필수 요소를 우선 반영하고, 한눈에 이해되는 명확한 장면을 구성하세요.',
+        '- 피사체의 형태·재질·표정·동작과 배경 요소가 서로 자연스럽고 일관되게 보이도록 묘사하세요.',
+        '- 사용 목적에 알맞은 시각적 위계와 여백을 확보하세요. 텍스트를 넣어 달라는 요구가 없다면 이미지 안에 임의의 글자, 로고, 워터마크를 만들지 마세요.',
+        '- 사진 스타일을 요청한 경우 자연스러운 조명, 현실적인 질감과 비율을 유지하세요. 일러스트 스타일이면 선·면·질감이 일관되도록 하세요.',
+        '- 피하고 싶은 요소는 생성에서 제외하세요. 참고 이미지가 제공된 경우 사용자가 지정한 참고 범위만 반영하고, 요청하지 않은 인물·상품의 정체성이나 핵심 특성을 임의로 바꾸지 마세요.',
+        '- 정보가 비어 있는 부분은 과도한 세부사항을 임의로 단정하지 말고, 주제와 목적에 어울리는 절제된 선택을 하세요.',
+        '- 결과는 깔끔하고 완성도 있게 구성하되, 실제 제품·장소·인물의 정확한 재현이 필요할 때 참고 자료가 부족하면 이를 사실처럼 지어내지 마세요.'
+      );
+      if (ratioKey !== 'none') koLines.push('- 비율은 ' + ratioKey + '로 맞추고, 잘려 나가면 안 되는 피사체가 가장자리에 걸리지 않게 배치하세요.');
+      if (overlay) koLines.push('- 이미지 안의 문구는 "' + overlay + '" 그대로, 읽기 쉬운 고딕체로 한 번만 넣고 오탈자 없이 정확히 표기하세요.');
+
+      koLines.push(
+        '',
+        '[모델별 사용 팁]',
+        'ChatGPT 이미지: 프롬프트를 붙여 넣고 생성한 뒤 수정은 한 번에 한두 요소씩 요청하세요.',
+        'Gemini 이미지: 참고 이미지를 쓸 경우 유지할 요소와 바꿀 요소를 구분해 지시하세요.',
+        'Claude: 환경에 이미지 생성 기능이 없으면 Claude에서 프롬프트를 다듬고 이미지 생성 지원 도구에 옮겨 사용하세요.'
+      );
+
+      const enBits = [
+        style.en,
+        sceneEn,
+        comp.en,
+        light.en,
+        palette.en,
+        purpose.en
+      ];
+      if (ratioKey !== 'none') enBits.push(ratioKey + ' aspect ratio');
+      if (overlay) enBits.push('text overlay reading "' + overlay + '"');
+      enBits.push('sharp focus', 'clean composition', 'high quality');
+
+      const params = [];
+      if (ratioKey !== 'none') params.push('--ar ' + ratioKey);
+      if (avoidEn) params.push('--no ' + avoidEn);
+      let enText = enBits.join(', ');
+      if (params.length) enText += ' ' + params.join(' ');
+
+      iOut.ko = koLines.join('\n');
+      iOut.en = enText;
+      iNeg = avoidEn;
+      renderImageOut();
+    }
+
+    function switchImageOut(mode, btn) {
+      iOutMode = mode;
+      document.querySelectorAll('#tab-image .seg-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      renderImageOut();
+    }
+
+    function renderImageOut() {
+      const pre = document.getElementById('i-out');
+      const tag = document.getElementById('i-out-tag');
+      const note = document.getElementById('i-en-notice');
+      const isEn = iOutMode === 'en';
+      const body = iOut[isEn ? 'en' : 'ko'];
+
+      pre.textContent = body || (isEn
+        ? '이미지 프롬프트를 만들면 Midjourney · Stable Diffusion용 영문 프롬프트가 여기에 나옵니다.'
+        : "왼쪽에 주제와 사용 목적을 입력하고 '이미지 프롬프트 만들기'를 눌러 주세요.");
+      tag.textContent = isEn
+        ? 'Midjourney · Stable Diffusion · DALL·E 등 영문 도구용'
+        : 'ChatGPT · Gemini 등 한국어 지원 이미지 AI용';
+
+      if (isEn && body) {
+        note.classList.remove('hidden');
+        if (iNotes.length) {
+          note.className = 'notice';
+          note.textContent = '⚠️ ' + iNotes.join(' ');
+        } else {
+          note.className = 'notice ok';
+          note.textContent = '✅ 한국어 없이 영어 키워드만으로 만든 프롬프트예요.';
+        }
+      } else {
+        note.classList.add('hidden');
+      }
+
+      const negWrap = document.getElementById('i-neg-wrap');
+      const negPre = document.getElementById('i-neg');
+      if (isEn && body && iNeg) {
+        negWrap.classList.remove('hidden');
+        negPre.textContent = iNeg;
+      } else {
+        negWrap.classList.add('hidden');
+        negPre.textContent = '';
+      }
     }
 
     function resetBlog() {
@@ -526,16 +1067,53 @@ ${topic}, ${style}${details ? ', ' + details : ''}${comp ? ', ' + comp : ''}, so
       document.getElementById('b-out').textContent = "왼쪽에 주제와 핵심 키워드를 입력하거나 위 프리셋 버튼을 눌러 '프롬프트 만들기'를 눌러 주세요.";
     }
     function resetImage() {
-      ['i-topic','i-purpose','i-style','i-details','i-comp'].forEach(id => document.getElementById(id).value = '');
-      document.getElementById('i-out').textContent = "왼쪽에 주제와 사용 목적을 입력하고 '이미지 프롬프트 만들기'를 눌러 주세요.";
+      ['i-topic', 'i-details', 'i-en', 'i-overlay', 'i-ref', 'i-avoid-custom',
+       'i-purpose-custom', 'i-style-custom', 'i-comp-custom', 'i-light-custom', 'i-palette-custom'
+      ].forEach(function (id) { document.getElementById(id).value = ''; });
+      setSelect('i-purpose', 'blog-cover', 'i-purpose-custom');
+      setSelect('i-style', 'photo-lifestyle', 'i-style-custom');
+      setSelect('i-comp', 'hero-wide', 'i-comp-custom');
+      setSelect('i-light', 'natural-soft', 'i-light-custom');
+      setSelect('i-palette', 'warm-beige', 'i-palette-custom');
+      setSelect('i-ratio', 'none');
+      document.getElementById('i-count').value = 1;
+      document.querySelectorAll('#i-avoid-chips input').forEach(function (cb) {
+        cb.checked = ['overretouch', 'garbled', 'hands'].indexOf(cb.value) !== -1;
+        cb.closest('label').classList.toggle('on', cb.checked);
+      });
+      document.querySelectorAll('#tab-image .preset-btn').forEach(function (b) { b.classList.remove('active'); });
+      document.getElementById('i-preset-hint').textContent = '프리셋을 누르면 스타일·구도·조명·비율·제외 요소가 한 번에 채워져요. 주제만 직접 적으면 바로 완성!';
+      iOut = { ko: '', en: '' };
+      iNotes = [];
+      iNeg = '';
+      iOutMode = 'ko';
+      document.querySelectorAll('#tab-image .seg-btn').forEach(function (b, idx) { b.classList.toggle('active', idx === 0); });
+      renderImageOut();
     }
     function copyText(id, btn) {
       const txt = document.getElementById(id).textContent;
-      navigator.clipboard.writeText(txt).then(() => {
+      const original = btn.textContent;
+      const done = () => {
         btn.textContent = '복사 완료!';
         btn.classList.add('copied');
-        setTimeout(() => { btn.textContent = '복사하기'; btn.classList.remove('copied'); }, 1600);
-      });
+        setTimeout(() => { btn.textContent = original; btn.classList.remove('copied'); }, 1600);
+      };
+      const fallback = () => {
+        const ta = document.createElement('textarea');
+        ta.value = txt;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand('copy'); done(); }
+        catch (e) { alert('복사가 안 되면 프롬프트를 직접 선택해 주세요.'); }
+        document.body.removeChild(ta);
+      };
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(txt).then(done).catch(fallback);
+      } else {
+        fallback();
+      }
     }
   </script>
 </body>
