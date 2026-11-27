@@ -344,6 +344,77 @@
       margin: 6px 0 0;
     }
     details.tips p b { color: var(--text); }
+    .tone-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(158px, 1fr));
+      gap: 8px;
+    }
+    .tone-opt {
+      text-align: left;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--muted);
+      border-radius: 12px;
+      padding: 9px 11px;
+      font-family: inherit;
+      font-size: 0.82rem;
+      font-weight: 700;
+      line-height: 1.35;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .tone-opt small {
+      display: block;
+      margin-top: 2px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--muted);
+      opacity: 0.9;
+    }
+    .tone-opt .pick {
+      font-size: 0.64rem;
+      font-weight: 800;
+      color: #b45309;
+      background: #fef3c7;
+      border-radius: 999px;
+      padding: 1px 6px;
+      margin-left: 3px;
+      vertical-align: 1px;
+    }
+    .tone-opt.active {
+      border-color: #bfdbfe;
+      background: var(--accent-soft);
+      color: var(--accent-dark);
+      box-shadow: inset 0 0 0 1px #bfdbfe;
+    }
+    .tone-opt.active small { color: var(--accent-dark); opacity: 0.85; }
+    .btn-dice {
+      border: 1px solid #c4b5fd;
+      background: #f5f3ff;
+      color: #5b21b6;
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-family: inherit;
+      font-size: 0.8rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .btn-dice:hover { background: #ede9fe; }
+    .btn-dice.spin { animation: dicePop 0.45s ease; }
+    @keyframes dicePop {
+      0% { transform: scale(1); }
+      45% { transform: scale(1.08) rotate(-4deg); }
+      100% { transform: scale(1); }
+    }
+    .fmt-row {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+      background: #f2f4f7;
+      border-radius: 14px;
+      padding: 3px;
+    }
+    .fmt-row .seg-btn { flex: 1 1 auto; min-width: 120px; }
     .neg-wrap { margin-top: 12px; }
     pre.neg {
       margin: 0;
@@ -369,6 +440,7 @@
       </div>
       <div class="tabs">
         <button class="tab-btn active" onclick="switchTab('blog', this)">블로그 · 텀블벅</button>
+        <button class="tab-btn" onclick="switchTab('tumblbug', this)">🎁 텀블벅 전용</button>
         <button class="tab-btn" onclick="switchTab('image', this)">이미지 제작</button>
       </div>
     </div>
@@ -664,14 +736,97 @@
         </div>
       </div>
     </section>
+
+    <!-- TUMBLBUG-ONLY TAB -->
+    <section id="tab-tumblbug" class="hidden">
+      <div class="hero">
+        <h1>🎁 텀블벅 전용 프롬프트 제조기</h1>
+        <p>프로젝트명·창작자 포인트·내가 느낀 점만 적으면 <b>텀블벅 커뮤니티 [체험단 리뷰]</b>와 <b>네이버 블로그 연동 후기</b> 프롬프트를 말투까지 골라서 뽑아 줍니다.</p>
+        <div class="preset-bar">
+          <button class="preset-btn" onclick="applyTbPreset('book', this)">📚 출판·굿즈 체험단</button>
+          <button class="preset-btn" onclick="applyTbPreset('tool', this)">💻 PDF·툴·자료집</button>
+          <button class="preset-btn" onclick="applyTbPreset('living', this)">🕯️ 향수·리빙</button>
+        </div>
+        <p class="hint" id="tb-preset-hint">프리셋을 누르면 출력 형식·말투·강조 포인트가 한 번에 채워져요.</p>
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <h2>1. 프로젝트 입력</h2>
+          <p class="sub">프로젝트명만 필수, 나머지는 아는 만큼만 적으면 돼요.</p>
+
+          <div class="field">
+            <label>프로젝트명 &amp; 창작자 <span class="req">*</span></label>
+            <input id="tb-project" type="text" placeholder="예: 도그마 27 출판 프로젝트 / 오블리크" />
+          </div>
+
+          <div class="field">
+            <label>상세페이지 창작자 강조 포인트</label>
+            <textarea id="tb-point" placeholder="예: 컨셉(멸망 후의 개, 마지막 개), 핵심 문구, 사양(양장·무선제본·컬러 200p), 텀블벅 한정 리워드, 배송 일정"></textarea>
+          </div>
+
+          <div class="field">
+            <label>내가 느낀 점 / 꼭 들어갈 내용</label>
+            <textarea id="tb-exp" placeholder="예: 3권 잘 도착, 찍힘 없음, 읽고 나서 더 쓰겠다는 마지막 줄"></textarea>
+          </div>
+
+          <div class="field">
+            <label>캐처·사진 준비물<span class="badge-soft">선택</span></label>
+            <input id="tb-shots" type="text" placeholder="예: 언박싱, 표지 클로즈업, 펀딩 달성률 캐처, 창작자 답글 캐처" />
+          </div>
+
+          <div class="field">
+            <label>출력 형식</label>
+            <div class="fmt-row">
+              <button class="seg-btn tb-fmt active" data-fmt="community" onclick="selectTbFormat('community', this)">커뮤니티 [체험단 리뷰] (980자)</button>
+              <button class="seg-btn tb-fmt" data-fmt="blog" onclick="selectTbFormat('blog', this)">블로그 연동 후기</button>
+              <button class="seg-btn tb-fmt" data-fmt="both" onclick="selectTbFormat('both', this)">2종 한 번에</button>
+            </div>
+            <p class="hint" id="tb-fmt-hint">텀블벅 커뮤니티 의견란에 바로 올릴 980자 후기</p>
+          </div>
+
+          <div class="field">
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap;">
+              <label style="margin:0;">말투</label>
+              <button class="btn-dice" id="tb-dice" onclick="randomTbTone()">🎲 랜덤 말투 뽑기</button>
+            </div>
+            <div class="tone-grid" id="tb-tone-grid" style="margin-top:9px;"></div>
+            <p class="hint" id="tb-tone-hint">고른 말투가 생성되는 프롬프트에 바로 반영돼요. 고민되면 🎲 버튼을 눌러 보세요.</p>
+          </div>
+
+          <div class="actions">
+            <button class="btn-primary" onclick="buildTumblbugPrompt()">텀블벅 프롬프트 만들기</button>
+            <button class="btn-ghost" onclick="resetTumblbug()">초기화</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="output-head">
+            <h2 style="margin:0;">2. 완성된 프롬프트</h2>
+            <button class="copy-btn" onclick="copyText('tb-out', this)">복사하기</button>
+          </div>
+          <div class="out-actions">
+            <span class="out-tag" id="tb-out-tag">출력 형식과 말투를 고르면 여기에 표시돼요</span>
+          </div>
+          <pre id="tb-out" class="output">왼쪽에 프로젝트명을 적고 '텀블벅 프롬프트 만들기'를 눌러 주세요. 말투는 🎲 버튼으로 뽑아도 돼요.</pre>
+          <details class="tips">
+            <summary>이 탭 쓰는 순서</summary>
+            <p><b>1.</b> 텀블벅 커뮤니티에 [체험단 리뷰]를 먼저 올리고, <b>2.</b> 그 후기를 바탕으로 블로그 글을 써요. 블로그 링크는 커뮤니티 후기에 덧붙입니다.</p>
+            <p><b>3.</b> 글 끝은 펀딩 달성률 캐처 → 창작자 피드백 카드 → 링크 미리보기(OG) 카드 순서. 스펙은 글로 쓰지 말고 캐처로 넣어요.</p>
+            <p><b>4.</b> 겹낫표·꿾쇠와 본문 해시태그는 쓰지 않고, 태그는 발행할 때 태그란에만 넣어요.</p>
+          </details>
+        </div>
+      </div>
+    </section>
   </main>
 
   <script>
     function switchTab(name, btn) {
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      document.getElementById('tab-blog').classList.toggle('hidden', name !== 'blog');
-      document.getElementById('tab-image').classList.toggle('hidden', name !== 'image');
+      ['blog', 'tumblbug', 'image'].forEach(function (key) {
+        document.getElementById('tab-' + key).classList.toggle('hidden', key !== name);
+      });
     }
 
     function applyTumblbugPreset() {
@@ -1091,6 +1246,232 @@ ${toneGuide}
       document.querySelectorAll('#tab-image .seg-btn').forEach(function (b, idx) { b.classList.toggle('active', idx === 0); });
       renderImageOut();
     }
+    /* ---------- 텀블벅 전용 탭 ---------- */
+    const TB_TONES = {
+      mania: {
+        label: '매니아', emoji: '🔥', desc: '찐팬 · 덕력 폭발',
+        guide: `[말투: 매니아 (찐팬·덕력 폭발)]
+- 이 창작자의 팬이었던 사람처럼 처음부터 끝까지 애정을 담아 써 주세요.
+- 창작자의 세계관과 디테일(문장, 일러스트, 제본, 포장, 리워드 구성)을 집어서 구체적으로 좋아하세요. "이거 실화냐", "이건 못 참지" 같은 감탄을 자연스럽게 섞어도 좋아요.
+- 감정의 온도만 높이고, 확인되지 않은 효능·성능·수치는 주장하지 마세요.`
+      },
+      expert: {
+        label: '전문가', emoji: '🔍', desc: '꼼꼼한 분석 · 디테일 시선',
+        guide: `[말투: 전문가 (꼼꼼한 분석·디테일 시선)]
+- 재질, 인쇄, 제본, 마감, 사용감, 구성품을 실제로 확인한 순서대로 담백하게 짚어 주세요.
+- "좋았다"로 끝내지 말고 무엇이 어떻게 좋았는지 근거를 붙이세요. 아쉬운 점도 한 가지는 솔직하게 쓰세요.
+- 감탄사와 이모지는 최소로, 문장은 정확하고 간결하게 쓰세요.`
+      },
+      weird: {
+        label: '괴짜 무드', emoji: '🌀', desc: '독특 · 4차원 감성',
+        guide: `[말투: 괴짜 무드 (독특·4차원 감성)]
+- 엉뚱한 비유나 예상 밖의 관찰 포인트로 시작해 보세요. 예를 들어 책을 편지함이라고 부르거나, 향을 시간대라고 표현하는 식이에요.
+- 4차원 감성은 살리되, 읽는 사람이 무슨 말인지 바로 알아들을 수 있게 한 줄씩 풀어 주세요.
+- 유행어를 억지로 붙이지 말고, 나만의 시선이 드러나게 쓰세요.`
+      },
+      essay: {
+        label: '감성 에세이', emoji: '✨', desc: '화니 추천 · 장면과 여운', pick: true,
+        guide: `[말투: 감성 에세이 (화니 추천 ✨)]
+- 장면과 감정을 중심으로, 짧은 문장과 여백을 살려 써 주세요.
+- 물건을 받아 든 순간, 읽거나 쓰는 동안의 공기, 마음이 움직인 지점을 담담하게 담으세요.
+- 미사여구보다 구체적인 장면 하나가 오래 남게. 마지막은 창작자에게 건네는 한 문장으로 맺어 주세요.`
+      },
+      chatty: {
+        label: '수다쟁이 찐후기', emoji: '💬', desc: '화니 추천 · 말하듯 술술', pick: true,
+        guide: `[말투: 수다쟁이 찐후기 (화니 추천 💬)]
+- 친구에게 말하듯 이어지는 문장으로 써 주세요. "ㅎㅎ", "아 이거 뭐야", "그리고 또" 같은 추임새를 자연스럽게 섞어요.
+- 괄호 속 혼잣말이나 갑자기 떠오른 생각을 한두 번 넣어 사람 냄새를 더하세요.
+- 이모지는 2~3개까지만, 문단은 짧게 끊어 리듬을 살려 주세요.`
+      },
+      chic: {
+        label: '시크 담백', emoji: '🖤', desc: '화니 추천 · 짧고 건조하게', pick: true,
+        guide: `[말투: 시크 담백 (화니 추천 🖤)]
+- 짧고 건조한 문장으로, 군더더기 없이 사실과 인상만 남기세요.
+- 감탄·이모지·느낌표는 거의 쓰지 않고, 좋았던 점과 아쉬운 점을 같은 온도로 쓰세요.
+- 담백함이 무심함이 되지 않게, 마지막 한 줄에서만 진심을 살짝 드러내세요.`
+      }
+    };
+
+    const TB_FORMATS = {
+      community: { label: '커뮤니티 [체험단 리뷰]', hint: '텀블벅 커뮤니티 의견란에 바로 올릴 980자 후기' },
+      blog: { label: '네이버 블로그 연동 후기', hint: '펀딩 캡처 + 창작자 피드백 카드 + OG 카드까지 들어간 블로그 글' },
+      both: { label: '커뮤니티 + 블로그 2종', hint: '커뮤니티 후기를 먼저, 그 내용을 살려 블로그 글까지 한 번에' }
+    };
+
+    const TB_FORMAT_BLOCK = {
+      community: `[출력: 텀블벅 커뮤니티 [체험단 리뷰]]
+- 첫 줄에 [체험단 리뷰] 말머리를 붙여 주세요.
+- 공백 포함 900~980자, 절대 1,000자를 넘기지 마세요.
+- 순서: 받아 본 첫인상 → 포장·구성 → 실제로 써 본 경험(구체적으로) → 아쉬웠던 점 하나 → 창작자에게 한마디.
+- 사진은 최대 10장 기준으로 [사진: 설명] 위치만 표시하세요.
+- 이모지는 소량, 줄바꿈으로 호흡을 나눠 주세요.
+- 맨 마지막 줄에 공백 포함 글자 수를 적어 주세요.`,
+      blog: `[출력: 네이버 블로그 연동 후기]
+- 추천 제목 3개 + 최종 추천 제목 1개를 먼저 주세요.
+- 본문은 공백 포함 1,500~2,000자.
+- 순서: 도입(프로젝트를 알게 된 계기) → 언박싱·첫인상 → 자세한 사용 후기 → 아쉬운 점·솔직한 한마디 → 창작자 응원.
+- 글 끝 순서는 꼭 지켜 주세요: (1) [사진: 펀딩 달성률 캡처] (2) 창작자 피드백 카드 - 다크 카드에 창작자가 남긴 반응을 큰따옴표로 넣고, 캡션은 "프로젝트 본문에 소개된 소중한 제작사 Pick" 같은 문구 (3) [링크: 프로젝트 링크 미리보기(OG 카드)] 자리.
+- 펀딩 기간·달성률 같은 숫자는 입력에 있을 때만 쓰고, 없으면 [확인 필요]로 남기세요.
+- 발행용 태그 10개는 본문과 분리해 맨 끝에 따로 적어 주세요. 본문에는 넣지 마세요.
+- 맨 끝에 텀블벅 커뮤니티 후기에 덧붙일 [블로그 링크] 자리를 표시하세요.`,
+      both: `[출력: 커뮤니티 + 블로그 2종 한 번에]
+- 아래 두 편을 순서대로, 구분선으로 나눠서 주세요.
+
+===== 1. 텀블벅 커뮤니티 [체험단 리뷰] =====
+- 첫 줄에 [체험단 리뷰] 말머리, 공백 포함 900~980자(1,000자 초과 금지).
+- 첫인상 → 포장·구성 → 실제 사용 경험 → 아쉬웠던 점 하나 → 창작자에게 한마디.
+- 사진은 최대 10장 기준으로 [사진: 설명] 위치만 표시.
+- 맨 마지막에 공백 포함 글자 수를 적어 주세요.
+
+===== 2. 네이버 블로그 연동 후기 =====
+- 추천 제목 3개 + 최종 1개, 본문은 공백 포함 1,500~2,000자.
+- 도입 → 언박싱·첫인상 → 자세한 사용 후기 → 아쉬운 점 → 창작자 응원.
+- 글 끝: [사진: 펀딩 달성률 캡처] → 창작자 피드백 카드(다크 카드, 큰따옴표 인용, 캡션 "프로젝트 본문에 소개된 소중한 제작사 Pick") → [링크: 프로젝트 링크 미리보기(OG 카드)].
+- 발행용 태그 10개는 본문과 분리해 맨 끝에.
+- 맨 끝에 [블로그 링크] 자리 표시.
+
+- 두 글의 문장을 그대로 복사하지 말고, 같은 경험을 다른 각도로 풀어 주세요. 커뮤니티는 짧고 선명하게, 블로그는 장면과 디테일을 더 넣어 주세요.`
+    };
+
+    const TB_PRESETS = {
+      book: {
+        fmt: 'both', tone: 'mania',
+        point: '컨셉과 세계관, 수록작·작가 소개, 사양(판형·제본·페이지·인쇄), 텀블벅 한정 리워드, 배송 일정',
+        hint: '📚 출판·굿즈 체험단: 커뮤니티 후기 + 블로그 글 2종, 매니아 말투로 채웠어요. 프로젝트명과 느낀 점만 적으면 돼요.'
+      },
+      tool: {
+        fmt: 'community', tone: 'expert',
+        point: '기능과 사용 환경, 지원 포맷, 업데이트 계획, 라이선스, 튜토리얼 구성',
+        hint: '💻 PDF·툴·자료집: 커뮤니티 980자, 전문가 말투로 채웠어요. 어떤 작업에 써 봤는지 적으면 훨씬 좋아요.'
+      },
+      living: {
+        fmt: 'both', tone: 'essay',
+        point: '향·소재, 사용 장면, 패키지·구성, 안전·주의사항, 배송 일정',
+        hint: '🕯️ 향수·리빙: 2종, 감성 에세이 말투로 채웠어요. 실제로 써 본 장면을 한두 줄 적어 주세요.'
+      }
+    };
+
+    let tbTone = 'mania';
+    let tbFormat = 'community';
+    let tbGenerated = false;
+
+    function renderTbTones() {
+      document.getElementById('tb-tone-grid').innerHTML = Object.keys(TB_TONES).map(function (key) {
+        const t = TB_TONES[key];
+        return '<button type="button" class="tone-opt' + (key === tbTone ? ' active' : '') + '" data-tone="' + key + '" onclick="selectTbTone(\'' + key + '\')">'
+          + t.emoji + ' ' + t.label
+          + (t.pick ? '<span class="pick">화니 추천</span>' : '')
+          + '<small>' + t.desc + '</small></button>';
+      }).join('');
+    }
+
+    function selectTbTone(key) {
+      if (!TB_TONES[key]) return;
+      tbTone = key;
+      renderTbTones();
+      const t = TB_TONES[key];
+      document.getElementById('tb-tone-hint').textContent = '지금 말투: ' + t.emoji + ' ' + t.label + ' (' + t.desc + ') — 프롬프트에 바로 반영돼요.';
+      if (tbGenerated) buildTumblbugPrompt(true);
+    }
+
+    function randomTbTone() {
+      const keys = Object.keys(TB_TONES).filter(function (k) { return k !== tbTone; });
+      const pick = keys[Math.floor(Math.random() * keys.length)];
+      const dice = document.getElementById('tb-dice');
+      dice.classList.remove('spin');
+      void dice.offsetWidth;
+      dice.classList.add('spin');
+      selectTbTone(pick);
+      const t = TB_TONES[pick];
+      document.getElementById('tb-tone-hint').textContent = '🎲 오늘의 말투: ' + t.emoji + ' ' + t.label + ' — 프롬프트에 반영했어요. 마음에 안 들면 한 번 더!';
+    }
+
+    function selectTbFormat(fmt, btn) {
+      if (!TB_FORMATS[fmt]) return;
+      tbFormat = fmt;
+      document.querySelectorAll('.tb-fmt').forEach(function (b) { b.classList.toggle('active', b === btn); });
+      document.getElementById('tb-fmt-hint').textContent = TB_FORMATS[fmt].hint;
+      if (tbGenerated) buildTumblbugPrompt(true);
+    }
+
+    function applyTbPreset(name, btn) {
+      const preset = TB_PRESETS[name];
+      if (!preset) return;
+      document.getElementById('tb-point').value = preset.point;
+      document.querySelectorAll('#tab-tumblbug .preset-btn').forEach(function (b) { b.classList.remove('active'); });
+      if (btn) btn.classList.add('active');
+      document.getElementById('tb-preset-hint').textContent = preset.hint;
+      tbFormat = preset.fmt;
+      document.querySelectorAll('.tb-fmt').forEach(function (b) { b.classList.toggle('active', b.dataset.fmt === preset.fmt); });
+      document.getElementById('tb-fmt-hint').textContent = TB_FORMATS[preset.fmt].hint;
+      selectTbTone(preset.tone);
+      const project = document.getElementById('tb-project');
+      if (project) project.focus();
+    }
+
+    function buildTumblbugPrompt(silent) {
+      const project = iVal('tb-project');
+      if (!project) {
+        if (!silent) {
+          alert('프로젝트명 & 창작자는 필수예요!');
+          document.getElementById('tb-project').focus();
+        }
+        return;
+      }
+      const point = iVal('tb-point');
+      const exp = iVal('tb-exp');
+      const shots = iVal('tb-shots');
+
+      const t = TB_TONES[tbTone];
+      const lines = [
+        '[역할과 목표]',
+        '당신은 텀블벅 체험단 후기를 쓰는 한국어 에디터입니다. 아래 프로젝트 정보를 바탕으로, 실제로 리워드를 받아 보고 써 본 사람의 후기를 씁니다.',
+        '화려한 광고 문구가 아니라, 읽는 사람이 믿고 펀딩할 수 있는 솔직한 기록이 목표입니다.',
+        '',
+        '[프로젝트 정보]',
+        '- 프로젝트명 & 창작자: ' + project,
+        '- 상세페이지에서 창작자가 강조한 포인트: ' + (point || '입력 없음. 상세페이지에서 확인된 범위만 쓰고 추측해서 채우지 마세요.'),
+        '- 내가 느낀 점 / 꼭 들어갈 내용: ' + (exp || '입력 없음. 확인되지 않은 감상은 [확인 필요]로 남기고 지어내지 마세요.'),
+        '- 캡처·사진 준비물: ' + (shots || '입력 없음'),
+        '',
+        t.guide,
+        '',
+        '[작성 규칙 - 반드시 지킬 것]',
+        '1. 『 』, 「 」, 《 》, 〈 〉, 【 】 같은 겹낫표·꺾쇠·장식 괄호는 쓰지 마세요. 인용이 필요하면 큰따옴표나 문장으로 풀어 쓰세요.',
+        '2. 본문 안에 해시태그를 넣지 마세요. 태그가 필요하면 본문 밖에 발행용으로만 따로 적으세요.',
+        '3. 입력에 없는 사실(가격, 성능, 다른 후기 반응, 창작자 답글)을 지어내지 마세요. 모르는 부분은 [확인 필요]로 남기세요.',
+        '4. 마크다운 볼드, 소제목, 번호 목록 없이 자연스러운 문단과 줄바꿈만 쓰세요.',
+        '5. 스펙·구성은 글로 나열하지 말고 [사진: 설명] 자리로만 표시하세요. 스펙은 캡처로 대신합니다.',
+        '6. 체험단으로 리워드를 무상 제공받아 직접 써 보고 쓴 솔직 후기라는 점을 도입부에 자연스럽게 밝히세요.',
+        '7. 문장 중간중간 내 생각이 들어가도 됩니다. 다만 광고 문구처럼 읽히지 않게, 실제로 겪은 것만 쓰세요.',
+        '8. 같은 문장을 반복하지 말고, 첫 문장에서 바로 이 프로젝트만의 장면으로 들어가세요.',
+        '',
+        TB_FORMAT_BLOCK[tbFormat],
+        '',
+        '[지금 할 일]',
+        '위 정보와 규칙, 말투로 ' + TB_FORMATS[tbFormat].label + ' 초안을 작성해 주세요.'
+      ];
+
+      document.getElementById('tb-out').textContent = lines.join('\n');
+      document.getElementById('tb-out-tag').textContent = '형식: ' + TB_FORMATS[tbFormat].label + ' · 말투: ' + t.emoji + ' ' + t.label;
+      tbGenerated = true;
+    }
+
+    function resetTumblbug() {
+      ['tb-project', 'tb-point', 'tb-exp', 'tb-shots'].forEach(function (id) { document.getElementById(id).value = ''; });
+      tbFormat = 'community';
+      tbGenerated = false;
+      document.querySelectorAll('.tb-fmt').forEach(function (b) { b.classList.toggle('active', b.dataset.fmt === 'community'); });
+      document.getElementById('tb-fmt-hint').textContent = TB_FORMATS.community.hint;
+      selectTbTone('mania');
+      document.querySelectorAll('#tab-tumblbug .preset-btn').forEach(function (b) { b.classList.remove('active'); });
+      document.getElementById('tb-preset-hint').textContent = '프리셋을 누르면 출력 형식·말투·강조 포인트가 한 번에 채워져요.';
+      document.getElementById('tb-out').textContent = "왼쪽에 프로젝트명을 적고 '텀블벅 프롬프트 만들기'를 눌러 주세요. 말투는 🎲 버튼으로 뽑아도 돼요.";
+      document.getElementById('tb-out-tag').textContent = '출력 형식과 말투를 고르면 여기에 표시돼요';
+    }
+
+    renderTbTones();
+
     function copyText(id, btn) {
       const txt = document.getElementById(id).textContent;
       const original = btn.textContent;
