@@ -60,6 +60,7 @@
     .tabs {
       display: flex;
       gap: 8px;
+      flex-wrap: wrap;
     }
     .tab-btn {
       border: 1px solid var(--line);
@@ -416,6 +417,13 @@
       padding: 3px;
     }
     .fmt-row .seg-btn { flex: 1 1 auto; min-width: 120px; }
+    @media (max-width: 560px) {
+      .nav { padding: 10px 14px; }
+      main { padding: 0 14px; }
+      .tabs { gap: 6px; }
+      .tab-btn { padding: 7px 11px; font-size: 0.8rem; }
+      .fmt-row .seg-btn { min-width: 0; }
+    }
     .neg-wrap { margin-top: 12px; }
     pre.neg {
       margin: 0;
